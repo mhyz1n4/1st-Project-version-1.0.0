@@ -10,6 +10,5 @@ import UIKit
 
 class InterestSelectingCollectionViewCell: UICollectionViewCell {
     
-    init
-    let backgroundImageView : UIImageView
+    
 }

@@ -17,8 +17,9 @@ class TabBarViewController: UITabBarController {
         let homeController = HomeCollectionViewController(collectionViewLayout: layout)
         let firstPageController = FirstPageViewController()
         let userSettingController = UserSettingsTableViewController()
+        let uploadPageController = PublishPhotosController()
         
-        viewControllers = [createNavControllers(title: "first page", imageName: "", viewController: firstPageController), createNavControllers(title: "collection view", imageName: "", viewController: homeController), createNavControllers(title: "User Settings", imageName: "", viewController: userSettingController)]
+        viewControllers = [createNavControllers(title: "first page", imageName: "", viewController: firstPageController), createNavControllers(title: "collection view", imageName: "", viewController: homeController), createNavControllers(title: "Upload article", imageName: "", viewController: uploadPageController), createNavControllers(title: "User Settings", imageName: "", viewController: userSettingController)]
         
     }
     

@@ -117,16 +117,7 @@ class HomePageCollectionViewCell : UICollectionViewCell{
     }()
 }
 
-extension UIView {
-    func addConstrainsWithFormat(format : String, views : UIView...){
-        var viewDictionary = [String : UIView]()
-        
-        for (index, view) in views.enumerated(){
-            let key = "v\(index)"
-            view.translatesAutoresizingMaskIntoConstraints = false
-            viewDictionary[key] = view
-        }
-        
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: format, options: NSLayoutFormatOptions(), metrics: nil, views: viewDictionary))
-    }
-}
+
+
+
+
