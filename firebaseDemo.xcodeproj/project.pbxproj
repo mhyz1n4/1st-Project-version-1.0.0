@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		043160201F03582F00EE3A3D /* InterestTagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0431601F1F03582F00EE3A3D /* InterestTagCell.swift */; };
 		8C080FEC1EFBBAA300E51616 /* HelperFunctions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C080FEB1EFBBAA300E51616 /* HelperFunctions.swift */; };
 		8C080FEE1EFD055000E51616 /* ArticleInputCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C080FED1EFD055000E51616 /* ArticleInputCell.swift */; };
 		8C21AED31ECC506B00EFDDDB /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C21AED21ECC506B00EFDDDB /* User.swift */; };
@@ -32,6 +33,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0431601F1F03582F00EE3A3D /* InterestTagCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InterestTagCell.swift; sourceTree = "<group>"; };
 		8C080FEB1EFBBAA300E51616 /* HelperFunctions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HelperFunctions.swift; sourceTree = "<group>"; };
 		8C080FED1EFD055000E51616 /* ArticleInputCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArticleInputCell.swift; sourceTree = "<group>"; };
 		8C21AED21ECC506B00EFDDDB /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 				8C5DBAE61EFA83AD005A11E5 /* TitleInputCell.swift */,
 				8C080FED1EFD055000E51616 /* ArticleInputCell.swift */,
 				8C8740091F00EDC600952826 /* PhotoPickingCell.swift */,
+				0431601F1F03582F00EE3A3D /* InterestTagCell.swift */,
 			);
 			name = UploadTableViewCells;
 			sourceTree = "<group>";
@@ -320,6 +323,7 @@
 				8C5DBAE71EFA83AD005A11E5 /* TitleInputCell.swift in Sources */,
 				8CF57FB91EC98A14005E11F6 /* FirstPageViewController.swift in Sources */,
 				8C85A21A1ED5710F0092A2D9 /* HomePageCollectionViewCell.swift in Sources */,
+				043160201F03582F00EE3A3D /* InterestTagCell.swift in Sources */,
 				8CF57FCA1EC98CF5005E11F6 /* LoginController.swift in Sources */,
 				8CF57FB71EC98A14005E11F6 /* AppDelegate.swift in Sources */,
 				8C85A21D1ED81A120092A2D9 /* Article.swift in Sources */,
