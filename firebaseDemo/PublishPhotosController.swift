@@ -18,6 +18,7 @@ class PublishPhotosController : UITableViewController, UINavigationControllerDel
     private let firstCellIdentifier = "firstCell"
     private let secondCellIdentifier = "secondCell"
     private let thirdCellIdentifier = "thirdCell"
+    private let fourthCellIdentifier = "fourthCell"
     
     var selectedAssets = [TLPHAsset]()
 
@@ -27,6 +28,7 @@ class PublishPhotosController : UITableViewController, UINavigationControllerDel
         self.tableView.register(TitleInputCell.self, forCellReuseIdentifier: firstCellIdentifier)
         self.tableView.register(ArticleInputCell.self, forCellReuseIdentifier: secondCellIdentifier)
         self.tableView.register(PhotoPickingCell.self, forCellReuseIdentifier: thirdCellIdentifier)
+        self.tableView.register(InterestTagCell.self, forCellReuseIdentifier: fourthCellIdentifier)
         
         view.backgroundColor = UIColor(colorLiteralRed: 240/255, green: 248/255, blue: 255/255, alpha: 1)
         super.viewDidLoad()
@@ -79,8 +81,11 @@ class PublishPhotosController : UITableViewController, UINavigationControllerDel
             thirdCell.delegate = self
             
             return thirdCell
-        }
-        else{
+        } else if indexPath.section == 3{
+            let fourthCell = tableView.dequeueReusableCell(withIdentifier: fourthCellIdentifier, for: indexPath) as! InterestTagCell
+            
+            return fourthCell
+        }else{
             let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! SettingsTableViewCell
             
             return cell
