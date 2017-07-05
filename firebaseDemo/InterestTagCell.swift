@@ -13,7 +13,7 @@ class InterestTagCell: UITableViewCell, UICollectionViewDelegate, UICollectionVi
     private let interestDataBase = [
         "少年","风景","美女","情感","运动","游戏","帅哥","汽车","手势","成长","手绘","爱情","工作","艺术","学习","烹饪","安静","夜晚","科技","复古","经典","故事","动漫","电影","浪漫","伤感","开心","流行","清新","环保","亲情","后悔"
     ]
-    private var selectedInterest = [String]()
+    var selectedInterest = [String]()
     private let cellId = "cellId"
     
     override func awakeFromNib() {

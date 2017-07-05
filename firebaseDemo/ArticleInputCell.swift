@@ -62,7 +62,7 @@ class ArticleInputCell: UITableViewCell, UITextViewDelegate{
         }
     }
     func textViewDidChange(_ textView: UITextView) {
-        <#code#>
+        
     }
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
 //        let maxAllowedCharactersPerLine = 

@@ -9,19 +9,15 @@
 import UIKit
 
 class Article: NSObject {
-    var imagesUrl : [String]?
+    var imagesUrl : [UIImage]?
     var title : String?
     var article : String?
-    var ID : String?
     var uploader : String?
-    var uploadTime : NSDate?
+    var uploadTime : String?
     
-    var user : User?
-    
-    init (imageUrl : [String], title : String, article : String, ID : String, uploader : String, uploadTime : NSDate) {
+    func setValues (imageUrl : [UIImage], title : String, article : String, uploader : String, uploadTime : String) {
         self.title = title
         self.imagesUrl = imageUrl
-        self.ID = ID
         self.uploader = uploader
         self.uploadTime = uploadTime
         self.article = article

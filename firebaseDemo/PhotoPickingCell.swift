@@ -32,7 +32,7 @@ class PhotoPickingCell: UITableViewCell, TLPhotosPickerViewControllerDelegate, U
     func setupPhotoCellView(){
         photoCellView.delegate = self
         photoCellView.dataSource = self
-        photoCellView.isScrollEnabled = false
+        photoCellView.isScrollEnabled = true
         
         self.addSubview(photoCellView)
         

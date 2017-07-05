@@ -12,19 +12,16 @@ import Firebase
 
 class PublishPhotosController : UITableViewController, UINavigationControllerDelegate, TLPhotosPickerViewControllerDelegate, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
-    var window: UIWindow?
-    private let cellId = "cellId"
-    private let reuseIdentifier = "cell"
     private let firstCellIdentifier = "firstCell"
     private let secondCellIdentifier = "secondCell"
     private let thirdCellIdentifier = "thirdCell"
     private let fourthCellIdentifier = "fourthCell"
-    
-    var selectedAssets = [TLPHAsset]()
 
+    private var article = Article()
+    private var interestTagString : String!
+    
     override func viewDidLoad(){
         
-        self.tableView.register(SettingsTableViewCell.self, forCellReuseIdentifier: reuseIdentifier)
         self.tableView.register(TitleInputCell.self, forCellReuseIdentifier: firstCellIdentifier)
         self.tableView.register(ArticleInputCell.self, forCellReuseIdentifier: secondCellIdentifier)
         self.tableView.register(PhotoPickingCell.self, forCellReuseIdentifier: thirdCellIdentifier)
@@ -34,6 +31,7 @@ class PublishPhotosController : UITableViewController, UINavigationControllerDel
         super.viewDidLoad()
         navigationController?.setNavigationBarHidden(false, animated: false)
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "完成", style: .plain, target: self, action: #selector(handleSubmit))
+        
         
     }
     
@@ -66,6 +64,10 @@ class PublishPhotosController : UITableViewController, UINavigationControllerDel
         return "\(section)"
     }
     
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 22
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         if indexPath.section == 0 {
@@ -81,30 +83,31 @@ class PublishPhotosController : UITableViewController, UINavigationControllerDel
             thirdCell.delegate = self
             
             return thirdCell
-        } else if indexPath.section == 3{
+        }else {
             let fourthCell = tableView.dequeueReusableCell(withIdentifier: fourthCellIdentifier, for: indexPath) as! InterestTagCell
             
             return fourthCell
-        }else{
-            let cell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath) as! SettingsTableViewCell
-            
-            return cell
         }
+        
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let sectionHeight = self.tableView.sectionHeaderHeight
+        var height2 = CGFloat()
+        let h = UIScreen.main.bounds.height
+        let height = self.tableView.frame.size.height
+        height2 = height - 4 * sectionHeight
+    
         if indexPath.section == 0 {
-            return 50
+            return h * 0.05
         }else if indexPath.section == 1{
-            return 120
+            return h * 0.25
         }else if indexPath.section == 2{
-            return 250
-        }else if indexPath.section == 3{
-            return 300
+            return h * 0.25
+        }else {
+            return h * 0.15
         }
-        else{
-            return 70
-        }
+        
     }
 
     func dismissPublishView(){
@@ -118,39 +121,102 @@ class PublishPhotosController : UITableViewController, UINavigationControllerDel
     
     var userName = ""
     func handleSubmit(){
-//        if let currentUser = FIRAuth.auth()?.currentUser, let ID = FIRAuth.auth()?.currentUser?.uid, let paragraph = momentTextField.text{
-////
-//        }
+        
+        self.setValuesForUpload()
+        self.uploadArticle()
+
+    }
+
+    func setValuesForUpload() {
+        
+        let firstIndex = IndexPath(row: 0, section: 0)
+        let secondIndex = IndexPath(row: 0, section: 1)
+        let thirdIndex = IndexPath(row: 0, section: 2)
+        let fourthIndex = IndexPath(row: 0, section: 3)
+        let firstCell = self.tableView.cellForRow(at: firstIndex) as! TitleInputCell
+        let secondCell = self.tableView.cellForRow(at: secondIndex) as! ArticleInputCell
+        let thirdCell = self.tableView.cellForRow(at: thirdIndex) as! PhotoPickingCell
+        let fourthCell = self.tableView.cellForRow(at: fourthIndex) as! InterestTagCell
+        
+        let title = firstCell.momentTextView.text!
+        let article = secondCell.inputTextView.text!
+        let photosAssets = thirdCell.selectedAssets
+        var images = [UIImage]()
+        for photo in photosAssets{
+            images.append(photo.fullResolutionImage!)
+        }
+        let interestTag = fourthCell.selectedInterest
+        let uploadUserID = FIRAuth.auth()?.currentUser?.uid
+        
+        let date = Date()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd.MM yyyy"
+        let uploadDate = formatter.string(from: date)
+        
+        var tagString : String!
+        for interest in interestTag{
+            if interestTag.index(of: interest) == interestTag.count - 1{
+                tagString.append(interest)
+            }else{
+                tagString.append("\(interest),")
+            }
+        }
+        print(tagString)
+        self.interestTagString = tagString
+        
+        self.article.setValues(imageUrl: images, title: title, article: article, uploader: uploadUserID!, uploadTime: uploadDate)
+        
     }
     
-    let inputSeperatorView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.lightGray
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
+    func uploadArticle(){
+        self.uploadImages { (count, imageTitle) in
+            uploadUserInfomation(count: count, imageTitle: imageTitle)
+        }
+    }
     
-    let inputContainerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.layer.masksToBounds = true
-        view.backgroundColor = UIColor(colorLiteralRed: 240/255, green: 248/255, blue: 255/255, alpha: 1)
-        return view
-    }()
+    func uploadUserInfomation(count : Int, imageTitle : String){
+        let storageRef = FIRStorage.storage().reference()
+        for index in 1...count - 1{
+            storageRef.child("Article_Images/\(imageTitle)/\(index).jpg").metadata(completion: { (metadata, error) in
+                if error != nil{
+                    print(error!)
+                }else{
+                    print(metadata!)
+                }
+            })
+        }
+    }
     
-    let momentTextField: UITextField = {
-        let tf = UITextField()
-        tf.keyboardType = .twitter
-        tf.keyboardAppearance = .dark
-        tf.placeholder = "在这里说点什么..."
-        tf.clearButtonMode = .whileEditing
-        tf.layer.masksToBounds = true
-        tf.becomeFirstResponder()
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        return tf
-    }()
-
+    func uploadImages () {
+        if let ID = FIRAuth.auth()?.currentUser?.uid, let currentUser = FIRAuth.auth()?.currentUser, let imageTitle = self.article.title, let imageArray = self.article.imagesUrl{
+            let storageRef = FIRStorage.storage().reference()
+            var count = 1
+            if imageArray.isEmpty != true{
+                for image in imageArray{
+                    let ref = storageRef.child("Article_Images/\(imageTitle)/\(count).jpg")
+                    let uploadData = UIImageJPEGRepresentation(image, 0.5)
+//                    ref.put(uploadData!, metadata: nil, completion: { (metadata, error) in
+//                        if error != nil {
+//                            print(error!)
+//                        }else{
+//                            print("image upload")
+//                        }
+//                    })
+                    let dataTask = ref.put(uploadData!, metadata: nil)
+                    if count == imageArray.count {
+                        dataTask.observe(.success, handler: { (snapshot) in
+                            let fileName = snapshot.
+                        })
+                    }
+                    count += 1
+                }
+            }
+        }
+    }
+    
 }
+
+
 
 extension PublishPhotosController : CustomCellDelegate {
     func presentImagePicker(viewController: UIViewController) {
