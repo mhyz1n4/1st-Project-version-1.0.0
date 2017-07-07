@@ -11,11 +11,13 @@ import UIKit
 class Article: NSObject {
     var imagesUrl : [UIImage]?
     var title : String?
+    var ID : String?
     var article : String?
     var uploader : String?
     var uploadTime : String?
     
-    func setValues (imageUrl : [UIImage], title : String, article : String, uploader : String, uploadTime : String) {
+    func setValues (imageUrl : [UIImage], title : String, article : String, uploader : String, uploadTime : String, ID : String) {
+        self.ID = ID
         self.title = title
         self.imagesUrl = imageUrl
         self.uploader = uploader

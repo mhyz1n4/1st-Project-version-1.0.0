@@ -18,7 +18,7 @@ class PublishPhotosController : UITableViewController, UINavigationControllerDel
     private let fourthCellIdentifier = "fourthCell"
 
     private var article = Article()
-    private var interestTagString : String!
+    private var interestTagString = ""
     
     override func viewDidLoad(){
         
@@ -147,13 +147,15 @@ class PublishPhotosController : UITableViewController, UINavigationControllerDel
         }
         let interestTag = fourthCell.selectedInterest
         let uploadUserID = FIRAuth.auth()?.currentUser?.uid
+        let ID = NSUUID().uuidString
         
         let date = Date()
         let formatter = DateFormatter()
         formatter.dateFormat = "dd.MM yyyy"
         let uploadDate = formatter.string(from: date)
         
-        var tagString : String!
+        
+        var tagString = ""
         for interest in interestTag{
             if interestTag.index(of: interest) == interestTag.count - 1{
                 tagString.append(interest)
@@ -161,57 +163,82 @@ class PublishPhotosController : UITableViewController, UINavigationControllerDel
                 tagString.append("\(interest),")
             }
         }
-        print(tagString)
+        //print(tagString)
         self.interestTagString = tagString
         
-        self.article.setValues(imageUrl: images, title: title, article: article, uploader: uploadUserID!, uploadTime: uploadDate)
+        self.article.setValues(imageUrl: images, title: title, article: article, uploader: uploadUserID!, uploadTime: uploadDate, ID : ID)
         
     }
     
     func uploadArticle(){
-        self.uploadImages { (count, imageTitle) in
-            uploadUserInfomation(count: count, imageTitle: imageTitle)
-        }
+        self.uploadImages ()
     }
     
-    func uploadUserInfomation(count : Int, imageTitle : String){
+    func uploadUserInfomation(count : Int, imageID : String){
+        guard let currentUser = FIRAuth.auth()?.currentUser, let ID = FIRAuth.auth()?.currentUser?.uid, let articleID = self.article.ID  else{
+            return
+        }
         let storageRef = FIRStorage.storage().reference()
-        for index in 1...count - 1{
-            storageRef.child("Article_Images/\(imageTitle)/\(index).jpg").metadata(completion: { (metadata, error) in
+        //let userRef = FIRDatabase.database().reference().child("User").child(ID)
+        let articleRef = FIRDatabase.database().reference().child("Article").child(articleID)
+        
+        let uploadData = ["Title" : self.article.title , "Body" : self.article.article , "Uploader" : self.article.uploader , "Date" : self.article.uploadTime, "Interest Tag" : self.interestTagString]
+        articleRef.updateChildValues(uploadData)
+        
+        for index in 1...count{
+            storageRef.child("Article_Images/\(imageID)/\(index).jpg").metadata(completion: { (metadata, error) in
                 if error != nil{
                     print(error!)
                 }else{
-                    print(metadata!)
+                    if let ImageUrl = metadata?.downloadURL()?.absoluteString{
+                        let imageDatabaseRef = articleRef.child("ImageUrl")
+                        let imageDictionary = ["\(index)" : ImageUrl]
+                        imageDatabaseRef.updateChildValues(imageDictionary)
+                    }
                 }
             })
         }
     }
     
     func uploadImages () {
-        if let ID = FIRAuth.auth()?.currentUser?.uid, let currentUser = FIRAuth.auth()?.currentUser, let imageTitle = self.article.title, let imageArray = self.article.imagesUrl{
+        if let imageID = self.article.ID, let imageArray = self.article.imagesUrl{
             let storageRef = FIRStorage.storage().reference()
             var count = 1
+            print("ID: " + imageID)
             if imageArray.isEmpty != true{
                 for image in imageArray{
-                    let ref = storageRef.child("Article_Images/\(imageTitle)/\(count).jpg")
+                    let ref = storageRef.child("Article_Images/\(imageID)/\(count).jpg")
                     let uploadData = UIImageJPEGRepresentation(image, 0.5)
-//                    ref.put(uploadData!, metadata: nil, completion: { (metadata, error) in
-//                        if error != nil {
-//                            print(error!)
-//                        }else{
-//                            print("image upload")
-//                        }
-//                    })
-                    let dataTask = ref.put(uploadData!, metadata: nil)
+                    
                     if count == imageArray.count {
+                        let dataTask = ref.put(uploadData!, metadata: nil)
                         dataTask.observe(.success, handler: { (snapshot) in
-                            let fileName = snapshot.
+                            
+                            print("Final Image Uploaded")
+                            
+                            let fileName = snapshot.reference.fullPath
+                            let range = fileName.index(fileName.endIndex, offsetBy: -5)..<fileName.index(fileName.endIndex, offsetBy: -4)
+                            
+                            let imageNum : Int? = Int(fileName.substring(with: range))
+                            
+                            self.uploadUserInfomation(count: imageNum!, imageID : imageID)
+                        })
+                    }else{
+                        let dataTask = ref.put(uploadData!, metadata: nil)
+                        dataTask.observe(.success, handler: { (snapshot) in
+                            print("image upload success")
                         })
                     }
                     count += 1
                 }
+            }else{
+                
             }
         }
+    }
+    
+    func uploadImage (images : UIImage, index : Int){
+        
     }
     
 }
